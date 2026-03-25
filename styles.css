@@ -4,18 +4,51 @@
  font-display: swap;
 }
 
+@property --core-stop {
+ syntax: "<percentage>";
+ inherits: false;
+ initial-value: 10%;
+}
+
+@property --ring-stop-1 {
+ syntax: "<percentage>";
+ inherits: false;
+ initial-value: 24%;
+}
+
+@property --ring-stop-2 {
+ syntax: "<percentage>";
+ inherits: false;
+ initial-value: 44%;
+}
+
+@property --ring-stop-3 {
+ syntax: "<percentage>";
+ inherits: false;
+ initial-value: 66%;
+}
+
+@property --ring-stop-4 {
+ syntax: "<percentage>";
+ inherits: false;
+ initial-value: 86%;
+}
+
 body {
- background: linear-gradient(
-  130deg,
-  #0a5e2a 0%,
-  #1f7a2f 28%,
-  #6d9d1d 56%,
-  #2f8a33 78%,
-  #39b9c7 90%,
+ background: radial-gradient(
+  circle at center,
+  #ff00c8 0%,
+  #ff00c8 var(--core-stop),
+  #00ffff var(--ring-stop-1),
+  #39b9c7 var(--ring-stop-2),
+  #2f8a33 var(--ring-stop-3),
+  #6d9d1d var(--ring-stop-4),
+  #1f7a2f 94%,
   #9bbf2c 100%
  );
- background-size: 220% 220%;
- animation: ambient-green-shift 36s ease-in-out infinite alternate;
+ background-position: center;
+ background-repeat: no-repeat;
+ animation: radial-bloom 16s ease-in-out infinite;
  color: #dad;
  margin: 0;
  padding: 18px 24px;
@@ -23,17 +56,24 @@ body {
  font-size: 13pt;
 }
 
-@keyframes ambient-green-shift {
- 0% {
-  background-position: 0% 35%;
+@keyframes radial-bloom {
+ 0%,
+ 100% {
+  background-size: 100% 100%;
+  --core-stop: 10%;
+  --ring-stop-1: 24%;
+  --ring-stop-2: 44%;
+  --ring-stop-3: 66%;
+  --ring-stop-4: 86%;
  }
 
  50% {
-  background-position: 100% 65%;
- }
-
- 100% {
-  background-position: 15% 45%;
+  background-size: 140% 140%;
+  --core-stop: 16%;
+  --ring-stop-1: 34%;
+  --ring-stop-2: 56%;
+  --ring-stop-3: 78%;
+  --ring-stop-4: 96%;
  }
 }
 
