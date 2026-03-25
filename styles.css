@@ -37,13 +37,12 @@
 body {
  background: radial-gradient(
   circle at center,
-  #ff00c8 0%,
-  #ff00c8 var(--core-stop),
-  #00ffff var(--ring-stop-1),
-  #39b9c7 var(--ring-stop-2),
-  #2f8a33 var(--ring-stop-3),
+  #00ffff 0%,
+  #00ffff var(--core-stop),
+  #39b9c7 var(--ring-stop-1),
+  #2f8a33 var(--ring-stop-2),
+  #1f7a2f var(--ring-stop-3),
   #6d9d1d var(--ring-stop-4),
-  #1f7a2f 94%,
   #9bbf2c 100%
  );
  background-position: center;
