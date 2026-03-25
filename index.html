@@ -1,0 +1,274 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<!--
+
+Taroko Gorge
+ Original Python program:
+ 8 January 2009, Taroko Gorge National Park, Taiwan and Eva Air Flight 28
+ This JavaScript version, with links:
+ 5 May 2020
+
+Copyright (c) 2009-2020 Nick Montfort <nickm@nickm.com>
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+Daruma ascii image credits:
+------------------------------------------------
+Thank you for visiting https://asciiart.website/
+This ASCII pic can be found at
+https://asciiart.website/art/6289
+submitted by user: rscr
+-->
+<link rel="stylesheet" href="styles.css">
+<script>
+var t=0;
+var n=0;
+var paths=0;
+var above='radiance,death,sky,star,sunlight,harmony,wisdom,dharma,enlightenment,awakening,compassion,buddha,sangha,lotus,celestial,bliss,nirvana,peace,mindfulness,concentration,truth,freedom,guidance,light,sunyata,anatman,dukkha,equanimity,interbeing,nonself,emptiness,being,absurdity,finitude,koan,samsara'.split(',');
+var below='river,forest,mountains,house,fire,seed,soil,water,vine,snakes,honey,body,sickness,death,greed,anger,ignorance,karma,sorrow,suffering,darkness,delusion,void,nothingness,silence,meaning,ego,time,abyss'.split(',');
+var trans='guide,find,leaving,taught,sharing,show,cultivate,protect,satisfy,cleansing,transform,embrace,destroy,defeated,listen,respect,maintain,practice,attain,carried,revealing,holding,giving,setting,guiding,contemplate,question,confront,renounce,witness,dissolve,unmask,transcend,emptying'.split(',');
+var imper='guard,seek,recognize,overcome,submit,remove,stop,rest,drop,follow,wake,strive,meditate,accepting,care,contemplate,renounce,witness,surrender,unlearn,empty'.split(',');
+var intrans='arise,run,grow,wake,flow,remained,suffer,return,become,sitting,living,fall,wandering,blooms,fades,sleeping,awaken,linger,vanish,endure,questioning,doubting'.split(',');
+var texture='bright,clear,pure,harsh,sweet,eternal,finite,infinite,deadly,beautiful,pleasant,ugly,warm,deep,solid,joyful,profound,ancient,supreme,temporary,heavenly,paradoxical,nameless,hollow,numinous,silent,formless,absurd,lucid'.split(',');
+var mass_nouns={
+ radiance:1,sunlight:1,harmony:1,wisdom:1,dharma:1,enlightenment:1,awakening:1,compassion:1,bliss:1,nirvana:1,
+ peace:1,equanimity:1,mindfulness:1,concentration:1,truth:1,freedom:1,guidance:1,light:1,fire:1,water:1,honey:1,
+ greed:1,anger:1,ignorance:1,karma:1,sorrow:1,suffering:1,darkness:1,delusion:1,sunyata:1,anatman:1,dukkha:1,
+ interbeing:1,nonself:1,emptiness:1,being:1,absurdity:1,finitude:1,nothingness:1,silence:1,meaning:1,time:1,
+ samsara:1,void:1
+};
+var plural_nouns={mountains:1,snakes:1};
+function rand_range(max) {
+ return Math.floor(Math.random()*(max+1));
+}
+function choose(array) {
+ return array[rand_range(array.length-1)];
+}
+function can_pluralize(noun) {
+ return !mass_nouns[noun] && !plural_nouns[noun];
+}
+function noun_is_plural(noun) {
+ return !!plural_nouns[noun];
+}
+function pluralize(noun) {
+ if (noun=='lotus') {
+  return 'lotuses';
+ }
+ if (noun.slice(-1)=='y' && 'aeiou'.indexOf(noun.slice(-2,-1))==-1) {
+  return noun.slice(0,-1)+'ies';
+ }
+ if (/([sxz]|sh|ch)$/.test(noun)) {
+  return noun+'es';
+ }
+ return noun+'s';
+}
+function singularize_simple(word) {
+ if (word.slice(-3)=='ies') {
+  return word.slice(0,-3)+'y';
+ }
+ if (word.slice(-2)=='es' && /([sxz]|sh|ch)es$/.test(word)) {
+  return word.slice(0,-2);
+ }
+ if (word.slice(-1)=='s' && word.slice(-2)!='ss') {
+  return word.slice(0,-1);
+ }
+ return word;
+}
+function third_person_singular(base) {
+ if (base=='have') {
+  return 'has';
+ }
+ if (base=='do') {
+  return 'does';
+ }
+ if (base.slice(-1)=='y' && 'aeiou'.indexOf(base.slice(-2,-1))==-1) {
+  return base.slice(0,-1)+'ies';
+ }
+ if (/([sxz]|sh|ch|o)$/.test(base)) {
+  return base+'es';
+ }
+ return base+'s';
+}
+function conjugate_transitive(verb, plural_subject) {
+ if (verb.slice(-3)=='ing') {
+  return (plural_subject ? 'are ' : 'is ')+verb;
+ }
+ if (verb=='taught' || verb.slice(-2)=='ed') {
+  return (plural_subject ? 'have ' : 'has ')+verb;
+ }
+ return plural_subject ? verb : third_person_singular(verb);
+}
+function conjugate_intransitive(verb, plural_subject) {
+ var base=verb;
+ if (base=='blooms' || base=='fades') {
+  base=singularize_simple(base);
+ }
+ if (base.slice(-3)=='ing') {
+  return (plural_subject ? 'are ' : 'is ')+base;
+ }
+ if (base=='remained' || base.slice(-2)=='ed') {
+  return (plural_subject ? 'have ' : 'has ')+base;
+ }
+ return plural_subject ? base : third_person_singular(base);
+}
+function choose_subject(pool) {
+ var noun=choose(pool);
+ var plural=noun_is_plural(noun);
+ if (!plural && can_pluralize(noun) && rand_range(4)==1) {
+  noun=pluralize(noun);
+  plural=true;
+ }
+ return {noun:noun, plural:plural};
+}
+function choose_object() {
+ var noun=choose(below);
+ if (!noun_is_plural(noun) && can_pluralize(noun) && rand_range(5)==1) {
+  noun=pluralize(noun);
+ }
+ return noun;
+}
+function path() {
+ var subject=choose_subject(above);
+ var words=subject.noun+' '+conjugate_transitive(choose(trans),subject.plural)+' the '+choose_object()+'.';
+ return words;
+}
+function site() {
+ var pool=(rand_range(2)==1) ? above : below;
+ var subject=choose_subject(pool);
+ var words=subject.noun+' '+conjugate_intransitive(choose(intrans),subject.plural)+'.';
+ return words;
+}
+function cave() {
+ var adjs=('encompassing,'+choose(texture)+',sinuous,straight,objective,arched,cool,clear,dim,driven').split(',');
+ var target=1+rand_range(3);
+ while (adjs.length>target) {
+  adjs.splice(rand_range(adjs.length),1);
+  }
+ var words='\u00a0\u00a0'+choose(imper)+' the '+adjs.join(' ')+' \u2014';
+ return words;
+}
+function do_line() {
+ var main=document.getElementById('main');
+ if (t<=25) {
+  t+=1;
+ } else {
+  main.removeChild(document.getElementById('main').firstChild);
+ }
+ if (n===0) {
+  text=' ';
+ } else if (n==1) {
+  paths=2+rand_range(2);
+  text=path();
+ } else if (n<paths) {
+  text=site();
+ } else if (n==paths) {
+  text=path();
+ } else if (n==paths+1) {
+  text=' ';
+ } else if (n==paths+2) {
+  text=cave();
+ } else {
+  text=' ';
+  n=0;
+ }
+ n+=1;
+ text=text.substring(0,1).toUpperCase()+text.substring(1,text.length);
+ last=document.createElement('div');
+ last.appendChild(document.createTextNode(text));
+ main.appendChild(last);
+}
+function load_daruma() {
+ var art=document.getElementById('daruma-art');
+ if (!art) {
+  return;
+ }
+ fetch('daruma.txt').then(function(response) {
+  if (!response.ok) {
+   throw new Error('Could not load daruma.txt');
+  }
+  return response.text();
+ }).then(function(text) {
+  art.textContent=text;
+ }).catch(function() {
+  art.textContent='Could not load daruma.txt';
+ });
+}
+function poem() {
+ load_daruma();
+ setInterval(do_line, 1200);
+}
+</script>
+  <title>Taroko Gorge</title>
+</head>
+<body onload="poem()">
+<div id="layout">
+<div id="main"></div>
+<div id="daruma">
+<pre id="daruma-art" aria-label="Daruma ASCII art"></pre>
+</div>
+<div id="colophon">
+<div>Taroko Gorge &middot; 2009-01-08</div>
+<del><a href="http://nickm.com">Nick Montfort</a></del><br>
+<del><a href="https://retts.net/tokyogarage.html">Scott Rettberg</a></del> <a href="https://retts.net/tokyogarage.html">[SR]</a><br>
+<del><a href="http://luckysoap.com/generations/gorge.html">J.R. Carpenter</a></del> <a href="http://luckysoap.com/generations/gorge.html">[JRC]</a><br>
+<del><a href="http://luckysoap.com/generations/whisperwire.html">J.R. Carpenter</a></del> <a href="http://luckysoap.com/generations/whisperwire.html">[JRC]</a><br>
+<del><a href="http://luckysoap.com/alongthebrinybeach/">J.R. Carpenter</a></del> <a href="http://luckysoap.com/alongthebrinybeach/">[JRC]</a><br>
+<del><a href="http://talanmemmott.info/ex/websupplement/toygarbage/index.html">Talan Memmott</a></del> <a href="http://talanmemmott.info/ex/websupplement/toygarbage/index.html">[TM]</a><br>
+<del><a href="http://exinfoam.wordpress.com/2011/07/18/yoko-engorged/">Eric Snodgrass</a></del> <a href="http://exinfoam.wordpress.com/2011/07/18/yoko-engorged/">[ES]</a><br>
+<del><a href="http://samplereality.com/elit/takeigeorge.html">Mark Sample</a></del> <a href="http://samplereality.com/elit/takeigeorge.html">[MS]</a><br>
+<del><a href="http://polyaesthetics.org/AloneEngaged.html">Maria Engberg</a></del> <a href="http://polyaesthetics.org/AloneEngaged.html">[ME]</a><br>
+<del><a href="http://www.madelineklink.com/portfolio/fredandgeorge.html">Flourish Klink</a></del> <a href="http://www.madelineklink.com/portfolio/fredandgeorge.html">[FK]</a><br>
+<del><a href="http://www.eblong.com/zarf/argot-ogre-ok.html">Andrew Plotkin</a></del> <a href="http://www.eblong.com/zarf/argot-ogre-ok.html">[AP]</a><br>
+<del><a href="http://wintermute.org/brendan/?p=designer-gulch">Brendan Howell</a></del> <a href="http://wintermute.org/brendan/?p=designer-gulch">[BH]</a><br>
+<del><a href="http://mason.gmu.edu/~asylvain/">Adam Sylvain</a></del> <a href="http://mason.gmu.edu/~asylvain/">[AS]</a><br>
+<del><a href="http://academic.uprm.edu/flores/TarokoGary.html">Leonardo Flores</a></del> <a href="http://academic.uprm.edu/flores/TarokoGary.html">[LF]</a><br>
+<del><a href="http://alimahzoon.com/html/mp2ab/final2.html">Alireza Mahzoon</a></del> <a href="http://alimahzoon.com/html/mp2ab/final2.html">[AM]</a><br>
+<del><a href="http://thefwordsrt.appspot.com/cameltail.html">Sonny Rae Tempest</a></del> <a href="http://thefwordsrt.appspot.com/cameltail.html">[SRT]</a><br>
+<del><a href="http://berens.org/kib/elit/tournedo2.html">Kathi Inman Berens</a></del> <a href="http://berens.org/kib/elit/tournedo2.html">[KIB]</a><br>
+<del><a href="https://web.archive.org/web/20130101033202/http://helenburgess.com/cheese/index.html">Helen Burgess</a></del> <a href="https://web.archive.org/web/20130101033202/http://helenburgess.com/cheese/index.html">[HB]</a><br>
+<del><a href="http://www.artcalifornia.net/scholars_contemplate.html">Judy Malloy</a></del> <a href="http://www.artcalifornia.net/scholars_contemplate.html">[JM]</a><br>
+<del><a href="http://mason.gmu.edu/~rbonsal1/DarkSideoftheWall.html">Bob Bonsall</a></del> <a href="http://mason.gmu.edu/~rbonsal1/DarkSideoftheWall.html">[BB]</a><br>
+<del><a href="http://www.sadiron.com/tacoma-grunge/">Chuck Rybak</a></del> <a href="http://www.sadiron.com/tacoma-grunge/">[CR]</a><br>
+<del><a href="http://zachwhalen.net/pg/forge/forge.html">Zach Whalen</a></del> <a href="http://zachwhalen.net/pg/forge/forge.html">[ZW]</a><br>
+<del><a href="http://springgunpress.com/leonardoflores/transmogrify">Leonardo Flores</a></del> <a href="http://springgunpress.com/leonardoflores/transmogrify">[LF]</a><br>
+<del><a href="http://www.digitalvitalism.com/take_ogre.html">John Pat McNamara</a></del> <a href="http://www.digitalvitalism.com/take_ogre.html">[JPM]</a><br>
+<del><a href="http://www.burling.org/jtburling/Wandering.html">James T. Burling</a></del> <a href="http://www.burling.org/jtburling/Wandering.html">[JTB]</a><br>
+<del><a href="http://ha.art.pl/nick_montfort/wawoz_taroko.html">Piotr Marecki &amp;<br>Aleksandra Małecka</a></del> <a href="http://ha.art.pl/nick_montfort/wawoz_taroko.html">[PM+AM]</a><br>
+<del><a href="http://tinysubversions.com/stuff/gorge/">Darius Kazemi</a></del> <a href="http://tinysubversions.com/stuff/gorge/">[DK]</a><br>
+<del><a href="http://www.romankalinovski.com/#/digital-projects/">Roman Kalinovski</a></del> <a href="http://www.romankalinovski.com/#/digital-projects/">[RK]</a><br>
+<del><a href="https://web.archive.org/web/20170115003943/https://www.baukhol.com/stuff/tollegarbage/tollegarbage.html">Thor Baukhol Madsen</a></del> <a href="https://web.archive.org/web/20170115003943/https://www.baukhol.com/stuff/tollegarbage/tollegarbage.html">[RK]</a><br>
+<del><a href="http://www.kardemommepartiet.no/">Anders Gonzo Gaard</a></del> <a href="http://www.kardemommepartiet.no/">[AGG]</a><br>
+<del><a href="http://ha.art.pl/nick_montfort/wawoz_taroko.html">Piotr Marecki</a></del> <a href="http://ha.art.pl/nick_montfort/wawoz_taroko.html">[PM]</a><br>
+<del><a href="http://techsty.art.pl/m10/garaz_tokio.html">Scott Rettberg &amp;<br>Mariusz Pisarski</a></del> <a href="http://techsty.art.pl/m10/garaz_tokio.html">[SR+MP]</a><br>
+<del><a href="http://techsty.art.pl/m10/oko_na_donbas.html">Mariusz Pisarski</a></del> <a href="http://techsty.art.pl/m10/oko_na_donbas.html">[MP]</a><br>
+<del><a href="http://digitaliteracies.net/Karaoke_Mirage.html">Robert Fletcher</a></del> <a href="http://digitaliteracies.net/Karaoke_Mirage.html">[BF]</a><br>
+<del><a href="http://pantherfile.uwm.edu/moulthro/hypertexts/myGorge/">Stuart Moulthrop</a></del> <a href="http://pantherfile.uwm.edu/moulthro/hypertexts/myGorge/">[SM]</a><br>
+<del><a href="http://dnanovel.reddustjg1.site.aplus.net/Rodgers_Taroko_At_Or_To_Take_Regret.html">Johanna Rodgers</a></del> <a href="http://dnanovel.reddustjg1.site.aplus.net/Rodgers_Taroko_At_Or_To_Take_Regret.html">[JR]</a><br>
+<del><a href="http://clarebryden.co.uk/mozfringe/dress-for-overcast.html">Clare Bryden</a></del> <a href="http://clarebryden.co.uk/mozfringe/dress-for-overcast.html">[CB]</a><br>
+<del><a href="http://www.inthescales.com/pages/kanjono-taroko/">Robin Hill</a></del> <a href="http://www.inthescales.com/pages/kanjono-taroko/">[RH]</a><br>
+<del><a href="https://www.pitt.edu/~jej39/shakespeare.html">Jeremy C. Justus</a></del> <a href="https://www.pitt.edu/~jej39/shakespeare.html">[JCJ]</a><br>
+<del><a href="http://brokenenglish.lol/4444/">Broken English</a></del> <a href="http://brokenenglish.lol/4444/">[BE]</a><br>
+<del><a href="http://multimodalmel.com/693/pages/trevogorge2.html">Trevor Arseneau</a></del> <a href="http://multimodalmel.com/693/pages/trevogorge2.html">[TA]</a><br>
+<del><a href="https://xeno.science/trancedgaze/">xenofem</a></del> <a href="https://xeno.science/trancedgaze/">[XF]</a><br>
+<del><a href="http://multimodalmel.com/pages/melroko.html">Melinda M. White</a></del> <a href="http://multimodalmel.com/pages/melroko.html">[MMW]</a><br>
+<del><a href="https://not-annie.itch.io/tough-guise">Anneke Nussbaum</a></del> <a href="https://not-annie.itch.io/tough-guise">[AN]</a><br>
+<del><a href="https://deenalarsen.net/waaw/">Mehul Desai &amp;<br>Deena Larsen</a></del> <a href="https://deenalarsen.net/waaw/">[MD+DL]</a><br>
+<del><a href="http://nickm.com">Nick Montfort &middot; 2025-07-25</a></del><br>
+Dan Nikiforov &middot; 2026-03-09
+</div>
+</div>
+</body>
+</html>
